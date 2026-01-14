@@ -12,7 +12,17 @@
       color: #f1f1f1;
     }
 
-    input, button { width: 100%; padding: 10px; margin: 10px 0; }
+    input, textarea, button { 
+      width: 100%; 
+      padding: 10px; 
+      margin: 10px 0; 
+      box-sizing: border-box;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
 
     .output { 
       margin-top: 20px; 
@@ -22,15 +32,25 @@
       color: #f1f1f1; 
       white-space: pre-wrap; 
       border-radius: 5px;
+      display: none;
+      opacity: 0;
+      transform: scale(0.95) translateY(-10px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
     }
 
-    /* Tytuł */
+    .output.show {
+      display: block;
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+
     h1 {
-      color: #ff5a00; /* pomarańcz Allegro */
+      color: #ff5a00;
     }
 
-    /* Pole input */
-    input[type="text"] {
+    input[type="text"],
+    input[type="password"],
+    textarea {
       background: #1e1e1e;
       color: #f1f1f1;
       border: 2px solid #ff5a00;
@@ -38,12 +58,17 @@
       font-size: 16px;
     }
 
-    input[type="text"]:focus {
-      outline: none;
-      border-color: #e64a00; /* ciemniejszy pomarańcz przy focusie */
+    input::placeholder,
+    textarea::placeholder {
+      color: #777;
     }
 
-    /* Przycisk "Generuj prompt" */
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #e64a00;
+    }
+
     button {
       background: #ff5a00;
       color: #fff;
@@ -58,35 +83,41 @@
       background: #e64a00;
     }
 
-    /* Rząd guzików ChatGPT + Kopiuj */
     .btn-row { 
       display: flex; 
       gap: 10px; 
       margin-top: 10px; 
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .btn-row.show {
+      opacity: 1;
+      transform: translateY(0);
+      animation: popIn 0.4s ease forwards;
     }
 
     .btn-row .btn {
       flex: 1;
       text-align: center;
       padding: 12px 20px;
-      background: #fff;          /* białe tło */
-      color: #000;               /* czarny tekst */
+      background: #fff;
+      color: #000;
       border: none;
       border-radius: 25px;
       cursor: pointer;
       font-size: 17px;
       height: 50px;
-      line-height: normal;
-      box-sizing: border-box;
       display: flex;
       align-items: center;
       justify-content: center;
       text-decoration: none;
-      transition: all 0.2s ease;
+      line-height: 1;
     }
 
     .btn-row .btn:hover {
-      background: #ddd;          /* lekko szary hover */
+      background: #ddd;
       transform: translateY(-2px);
     }
 
@@ -94,57 +125,154 @@
       transform: translateY(0);
       background: #ccc;
     }
+
+    @keyframes popIn {
+      0% { transform: scale(0.8); opacity: 0; }
+      80% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+
+    #pinScreen {
+      max-width: 500px;
+      margin: 80px auto;
+      padding: 30px;
+      background: #1e1e1e;
+      border: 2px solid #ff5a00;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    #pinScreen p {
+      color: #ccc;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 600px) {
+      body { margin: 20px; }
+      #pinScreen { margin: 40px 10px; padding: 20px; }
+      h1 { font-size: 1.5em; }
+      input[type="text"], input[type="password"], textarea, button { font-size: 15px; }
+      .btn-row .btn { font-size: 14px; height: 45px; }
+    }
+
+    @media (max-width: 400px) {
+      h1 { font-size: 1.3em; }
+      input[type="text"], input[type="password"], textarea, button { font-size: 14px; padding: 8px; }
+      .btn-row .btn { font-size: 13px; height: 42px; }
+    }
   </style>
 </head>
 <body>
 
-  <h1>Generator promptów do opisów Allegro</h1>
-  <p>Podaj tytuł oferty, a generator przygotuje dla Ciebie gotowy prompt do ChatGPT.</p>
+  <div id="pinScreen">
+    <h1>🔒 Witaj w Generatorze Promptów!</h1>
+    <p>
+      Twórz idealne polecenia dla ChatGPT w kilka sekund.<br>
+      Skopiuj wygenerowany prompt, aby uzyskać gotowy, profesjonalny opis dla swoich ofert na Allegro lub sklepie internetowym.<br>
+      Szybko, wygodnie i bez zbędnego wysiłku – wszystko w jednym miejscu!
+    </p>
+    <input type="password" id="pinInput" placeholder="Wpisz PIN">
+    <button id="unlockBtn">Odblokuj</button>
+  </div>
 
-  <!-- Pole input + przycisk -->
-  <input type="text" id="title" placeholder="np. SOMBRERO MEKSYKAŃSKIE KAPELUSZ CZARNE 50 CM">
-  <button onclick="generatePrompt()">Generuj prompt</button>
+  <div id="generator" style="display:none;">
+    <h1>Generator promptów do opisów Allegro</h1>
+    <p>Podaj tytuł oferty i opcjonalne dane dodatkowe.</p>
 
-  <!-- Wynik -->
-  <div class="output" id="promptOutput"></div>
+    <input type="text" id="title" placeholder="np. Iphone 16 Pro 256GB">
+    <textarea id="extraData" placeholder="Dodatkowe dane (opcjonalnie) – np. branża, wymiary, pojemność, materiał, kolor, przeznaczenie"></textarea>
+    <button onclick="generatePrompt()">Generuj prompt</button>
 
-  <!-- Przyciski akcji -->
-  <div class="btn-row" id="actions" style="display:none;">
-    <button class="btn" onclick="copyPrompt()">📋 Skopiuj prompt</button>
-    <a class="btn" href="https://chat.openai.com/" target="_blank">💬 Otwórz ChatGPT</a>
+    <div class="output" id="promptOutput"></div>
+
+    <div class="btn-row" id="actions">
+      <button class="btn" onclick="copyPrompt()">📋 Skopiuj prompt</button>
+      <button class="btn" onclick="window.open('https://chat.openai.com/', '_blank')">💬 Otwórz ChatGPT</button>
+    </div>
   </div>
 
   <script>
+    const CORRECT_PIN = "1234";
+
+    // ENTER działa poprawnie na wszystkich urządzeniach
+    document.getElementById("pinInput").addEventListener("keydown", function(event){
+      if(event.key === "Enter"){
+        event.preventDefault();
+        checkPin();
+      }
+    });
+
+    document.getElementById("unlockBtn").addEventListener("click", checkPin);
+
+    document.getElementById("title").addEventListener("keydown", function(event){
+      if(event.key === "Enter"){
+        event.preventDefault();
+        generatePrompt();
+      }
+    });
+
+    function checkPin() {
+      const pin = document.getElementById("pinInput").value.trim();
+      if(pin === CORRECT_PIN) {
+        document.getElementById("pinScreen").style.display = "none";
+        document.getElementById("generator").style.display = "block";
+      } else alert("❌ Błędny PIN");
+    }
+
     function generatePrompt() {
-      const title = document.getElementById("title").value;
+      const title = document.getElementById("title").value.trim();
+      const extra = document.getElementById("extraData").value.trim();
+      if(!title) return;
 
-      const prompt = `
-Na podstawie tytułu oferty: "${title}" 
-stwórz opis w 5 sekcjach:
+      const extraSection = extra ? `\n\nDodatkowe informacje od sprzedawcy:\n${extra}` : "";
+      const sections = [
+        "1. Krótki opis produktu (max 5 zdań)",
+        "2. Zastosowanie",
+        "3. Dane techniczne i wymiary (lista punktowana)",
+        "4. Zalety produktu (5 punktów)",
+        "5. Dodatkowe informacje",
+        "6. FAQ"
+      ];
 
-1. Krótki opis produktu (max 5 zdań),
-2. Zastosowanie,
-3. Dane techniczne i wymiary (lista punktowana),
-4. Zalety produktu (5 punktów),
-5. Dodatkowe informacje.
-6. FAQ
+      const prompt = `Na podstawie tytułu oferty: "${title}"${extraSection}\n\nstwórz opis w 6 sekcjach:\n\n${sections.join("\n\n")}\n\nUżywaj nagłówków (WIELKIE LITERY), list punktowanych i krótkich akapitów.\nNie dodawaj zachęt do zakupu ani kontaktu.\nStyl oficjalny, prosty i rzeczowy.`;
 
-Używaj nagłówków (np. z dużych liter), list punktowanych i krótkich akapitów.
-Nie dodawaj zachęt do zakupu ani kontaktu.
-Styl oficjalny, ale prosty i rzeczowy.
-      `;
+      const output = document.getElementById("promptOutput");
+      output.textContent = "";
+      output.style.display = "block";
+      output.classList.remove("show");
+      document.getElementById("actions").classList.remove("show");
 
-      document.getElementById("promptOutput").textContent = prompt.trim();
-      document.getElementById("actions").style.display = "flex";
+      const lines = prompt.split("\n");
+      let lineIndex = 0;
+
+      function typeLine() {
+        if(lineIndex >= lines.length) {
+          document.getElementById("actions").classList.add("show");
+          output.scrollIntoView({behavior: "smooth", block: "start"});
+          return;
+        }
+        const line = lines[lineIndex] + "\n";
+        let charIndex = 0;
+
+        function typeChar() {
+          output.textContent += line[charIndex];
+          charIndex++;
+          if(charIndex < line.length) setTimeout(typeChar, 15);
+          else { lineIndex++; setTimeout(typeLine, 30); }
+        }
+
+        typeChar();
+      }
+
+      setTimeout(() => output.classList.add("show"), 10);
+      typeLine();
     }
 
     function copyPrompt() {
       const text = document.getElementById("promptOutput").textContent;
-      navigator.clipboard.writeText(text).then(() => {
-        alert("✅ Prompt skopiowany do schowka!");
-      });
+      navigator.clipboard.writeText(text).then(() => alert("✅ Prompt skopiowany do schowka!"));
     }
   </script>
-
 </body>
 </html>
