@@ -131,19 +131,30 @@
 
     #pinScreen p { color: #ccc; margin-bottom: 20px; line-height: 1.5; }
 
+    /* Tablet i małe ekrany */
     @media (max-width: 600px) {
       body { margin: 10px; }
+      #mainContainer { padding: 5px; }
       #pinScreen { margin: 40px 10px; padding: 20px; }
       h1 { font-size: 1.5em; }
+      p.description { font-size: 14px; }
       input, textarea, button { font-size: 15px; padding: 10px; }
       .btn-row .btn { font-size: 14px; height: 45px; }
     }
 
-    @media (max-width: 400px) {
-      h1 { font-size: 1.3em; }
-      input, textarea, button { font-size: 14px; padding: 8px; }
-      .btn-row .btn { font-size: 13px; height: 42px; }
+    /* Smartfony – dopasowanie "aplikacyjne" */
+    @media (max-width: 500px) {
+      body { margin: 5px; }
+      #mainContainer { padding: 5px; }
+      #pinScreen { margin: 20px 5px; padding: 15px; }
+      #generator { margin: 10px 5px; }
+      h1 { font-size: 1.2em; }
+      p.description { font-size: 13px; }
+      input, textarea, button { font-size: 13px; padding: 8px; }
+      .btn-row .btn { font-size: 12px; height: 40px; padding: 8px; }
+      .output { font-size: 13px; padding: 10px; }
     }
+
   </style>
 </head>
 <body>
@@ -151,7 +162,7 @@
   <div id="mainContainer">
 
     <div id="pinScreen">
-      <h1>🔒 Witaj w Generatorze Promptów!</h1>
+      <h1>👋 Witaj w Generatorze Promptów!</h1>
       <p class="description">
         Twórz idealne polecenia dla ChatGPT w kilka sekund.<br>
         Skopiuj wygenerowany prompt, aby uzyskać gotowy, profesjonalny opis dla swoich ofert na Allegro lub sklepie internetowym.
