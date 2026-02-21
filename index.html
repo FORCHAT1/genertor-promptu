@@ -131,7 +131,6 @@
 
     #pinScreen p { color: #ccc; margin-bottom: 20px; line-height: 1.5; }
 
-    /* Tablet i małe ekrany */
     @media (max-width: 600px) {
       body { margin: 10px; }
       #mainContainer { padding: 5px; }
@@ -142,7 +141,6 @@
       .btn-row .btn { font-size: 14px; height: 45px; }
     }
 
-    /* Smartfony – dopasowanie "aplikacyjne" */
     @media (max-width: 500px) {
       body { margin: 5px; }
       #mainContainer { padding: 5px; }
@@ -154,7 +152,6 @@
       .btn-row .btn { font-size: 12px; height: 40px; padding: 8px; }
       .output { font-size: 13px; padding: 10px; }
     }
-
   </style>
 </head>
 <body>
@@ -227,8 +224,21 @@
         "6. FAQ"
       ];
 
-      const prompt = Na podstawie tytułu oferty: "${title}"${extraSection}\n\nstwórz opis w 6 sekcjach:\n\n${sections.join("\n\n")}\n\nUżywaj nagłówków (WIELKIE LITERY), list punktowanych i krótkich akapitów.\nNie dodawaj zachęt do zakupu ani kontaktu.\nStyl oficjalny, przed Zastosowanie daj zawsze✅, Dane techniczne i wymiary⚙️, Zalety produktu✅, Dodatkowe informacje za nagłówkiem❗️, FAQ za daj❓,.; prosty i rzeczowy.
+      const prompt = `Na podstawie tytułu oferty: "${title}"${extraSection}
 
+stwórz opis w 6 sekcjach:
+
+${sections.join("\n\n")}
+
+Używaj nagłówków (WIELKIE LITERY), list punktowanych i krótkich akapitów.
+Nie dodawaj zachęt do zakupu ani kontaktu.
+Styl oficjalny, prosty i rzeczowy.
+Emotki dodawaj zawsze przed nagłówkami "✅Zastosowanie", 
+"⚙️ Dane techniczne i wymiary", 
+"✅Zalety produktu",
+Teraz te emotki zawsze za nagłówkiem 
+"Dodatkowe informacje❗️", 
+"FAQ❓".`;
 
       promptOutput.textContent = "";
       promptOutput.style.display = "block";
@@ -266,6 +276,3 @@
   </script>
 </body>
 </html>
-
-
-
